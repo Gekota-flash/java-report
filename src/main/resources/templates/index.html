@@ -3,10 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link href="../static/layui/css/layui.css">
+    <link rel="stylesheet" href="../static/layui/css/layui.css">
+    <link rel="stylesheet" href="../static/css/index.css">
 </head>
 <body>
-<script src="../static/layui/layui.js"></script>
-haha
+<script type="text/javascript" src="../static/js/jquery-3.5.1.js"></script>
+<script type="text/javascript" src="../static/layui/layui.js"></script>
+<p></p>
+<div class="layui-container">
+    <form class="layui-form" action="">
+        <div class="layui-row">
+            <div class="layui-col-md4 layui-col-md-offset4">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">基础路径</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="basePath" disabled  placeholder="" autocomplete="off" class="layui-input common-input">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-row">
+            <div class="layui-col-md4 layui-col-md-offset4">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">当前文件</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="title" disabled placeholder="" autocomplete="off" class="layui-input common-input">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-row">
+            <div class="layui-col-md4 layui-col-md-offset4">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">生成文件</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="title" disabled placeholder="" autocomplete="off" class="layui-input common-input">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-row row-blank">
+            <div class="layui-col-md2 layui-col-md-offset4">
+                <button type="button" id="chooseNowBtn" class="layui-btn layui-btn-normal common-btn">选择当前文件</button>
+            </div>
+            <div class="layui-col-md2">
+                <button type="button" class="layui-btn layui-btn-warm common-btn">生成文件</button>
+            </div>
+        </div>
+        <div class="layui-row row-blank">
+            <div class="layui-col-md2 layui-col-md-offset4">
+                <button type="file" id="chooseSaleBtn" class="layui-btn layui-btn-normal common-btn">选择销售文件</button>
+            </div>
+            <div class="layui-col-md2">
+                <input type="text" name="title" disabled placeholder="" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+    </form>
+</div>
+<script type="text/javascript" src="../static/js/index.js"></script>
 </body>
 </html>
