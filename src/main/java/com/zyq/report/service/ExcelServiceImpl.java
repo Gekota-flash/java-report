@@ -1,13 +1,23 @@
 package com.zyq.report.service;
 
+import com.zyq.report.model.SaleModel;
+import com.zyq.report.util.ExcelUtil;
 import com.zyq.report.util.LocalDateUtil;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ExcelServiceImpl implements ExcelService {
+
+    @Autowired
+    private ExcelUtil excelUtil;
 
     @Autowired
     private LocalDateUtil localDateUtil;
@@ -45,6 +55,110 @@ public class ExcelServiceImpl implements ExcelService {
             }
         }
         return dest;
+    }
+
+    /**
+     * 分发销售单
+     * @param min
+     * @param max
+     * @param is
+     * @param path
+     * @param sheetName
+     */
+    @Override
+    public void distributeSale(int min, int max, InputStream is,  String path, String sheetName) {
+        Workbook workbook = excelUtil.readExcel(is);
+        Sheet sheet = workbook.getSheet(sheetName);
+        //获取指定范围的row
+        List<Row> rowList = excelUtil.getRangeRowList(sheet, min, max);
+        //转换成model
+        List<SaleModel> saleModels = excelUtil.convertRow(rowList);
+        //获取按销售单位分类的销售单
+        Map<String, List<SaleModel>> sallersMap = typeSallers(saleModels);
+        Map<String, List<Row>> sallerRowsMap = typeSallerRows(rowList);
+        //获取销售单位集合
+        Set<String> sallers = getSallers(saleModels);
+        Iterator<String> iterator = sallers.iterator();
+        String s = "";
+        Sheet tempSheet = null;
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(path);
+            while (iterator.hasNext()) {
+                s = iterator.next();
+                tempSheet = workbook.getSheet(s);
+                if (tempSheet == null) {
+                    tempSheet = workbook.createSheet(s);
+                    excelUtil.setColumnWidth(sheet, tempSheet);
+                    excelUtil.copyHeader(sheet, tempSheet);
+                    excelUtil.copySaller(sheet, tempSheet, sallerRowsMap.get(s));
+                }else {
+
+                }
+            }
+            workbook.write(fos);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (SaleModel model : saleModels) {
+            System.out.println(model.toString());
+        }
+    }
+
+    /**
+     * 给销售单位做映射分类
+     * @param saleList
+     * @return
+     */
+    @Override
+    public Map<String, List<SaleModel>> typeSallers(List<SaleModel> saleList) {
+        return saleList.stream().collect(Collectors.groupingBy(SaleModel::getSale2));
+    }
+
+    @Override
+    public Map<String, List<Row>> typeSallerRows(List<Row> rowList) {
+        return rowList.stream().collect(Collectors.groupingBy(row -> row.getCell(2) == null ? null : row.getCell(2).getStringCellValue()));
+    }
+
+    @Override
+    public Set<String> getSallers(List<SaleModel> saleList) {
+        Set<String> set = new HashSet<>();
+        for (SaleModel sale : saleList) {
+            set.add(sale.getSale2());
+        }
+        return set;
+    }
+
+    @Override
+    public void createSheet(Set<String> sallers, Workbook workbook) {
+        Iterator<String> iterator = sallers.iterator();
+        String s = "";
+        Sheet sheet = null;
+        while (iterator.hasNext()) {
+            s = iterator.next();
+            sheet = workbook.getSheet(s);
+            if (sheet == null) {
+                workbook.createSheet(s);
+            }
+        }
+    }
+
+    /**
+     *
+     * @param sheet
+     */
+    @Override
+    public void setSallerHeader(Sheet sheet) {
+        Row row1 = sheet.getRow(0);
     }
 
 }

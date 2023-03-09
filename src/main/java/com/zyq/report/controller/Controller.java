@@ -5,14 +5,10 @@ import com.zyq.report.model.PathReq;
 import com.zyq.report.service.ExcelService;
 import com.zyq.report.util.ExcelUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
-import java.util.List;
 
 @RestController
 @RequestMapping("/common")
@@ -51,23 +47,23 @@ public class Controller {
     @RequestMapping(value = "/test", method = RequestMethod.POST)
     public void test() {
         File file = SingleFile.getFile();
+//        File file1 = SingleFile.getFile();
         InputStream inputStream = null;
+//        OutputStream outputStream = null;
         try {
             inputStream = new FileInputStream(file);
+//            outputStream = new FileOutputStream(file1);
+
+        excelService.distributeSale(2,81, inputStream, file.getPath(),"变压器销售总账 (2)");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-        }
-        Workbook workbook = excelUtil.readExcel(inputStream);
-        Sheet sheet = excelUtil.readSheet(workbook, "变压器销售总账 (2)");
-        List<Row> rowList = excelUtil.getRowList(sheet);
-        for (Row row : rowList) {
-            System.out.println(row.getCell(0).toString() + row.getCell(1).getLocalDateTimeCellValue().toString() + row.getCell(2).toString());
-        }
-//        excelService.copyExcel("E:\\caiwu_pro\\新建文件夹\\2023年销售变压器-油变、干变 - 副本1.xlsx");
-        try {
-            inputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } finally {
+            try {
+//                outputStream.close();
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
