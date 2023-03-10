@@ -15,6 +15,11 @@ import java.util.List;
 @Component
 public class ExcelUtil {
 
+    /**
+     * 读取Excel文件
+     * @param inputStream
+     * @return
+     */
     public Workbook readExcel(InputStream inputStream) {
         Workbook workbook = null;
         try {
@@ -29,6 +34,11 @@ public class ExcelUtil {
         return workbook.getSheet(sheetName);
     }
 
+    /**
+     * 自动获取列表内容
+     * @param sheet
+     * @return
+     */
     public List<Row> getRowList(Sheet sheet) {
         List<Row> rows = new ArrayList<>();
         int num = sheet.getPhysicalNumberOfRows();
@@ -42,6 +52,13 @@ public class ExcelUtil {
         return rows;
     }
 
+    /**
+     * 获取指定范围列表内容
+     * @param sheet
+     * @param min
+     * @param max
+     * @return
+     */
     public List<Row> getRangeRowList(Sheet sheet, int min, int max) {
         List<Row> rows = new ArrayList<>();
         for (int i = min; i <= max; i++) {
@@ -51,6 +68,11 @@ public class ExcelUtil {
         return rows;
     }
 
+    /**
+     * 读取表头内容（销售单）
+     * @param sheet
+     * @return
+     */
     public List<Row> getHeaderRowList(Sheet sheet) {
         List<Row> rows = new ArrayList<>();
         for (int i = 0; i <= 1; i++) {
@@ -60,6 +82,11 @@ public class ExcelUtil {
         return rows;
     }
 
+    /**
+     * 转换row为saleModel
+     * @param rowList
+     * @return
+     */
     public List<SaleModel> convertRow(List<Row> rowList) {
         List<SaleModel> saleList = new ArrayList<>();
         SaleModel saleModel = null;
@@ -126,6 +153,12 @@ public class ExcelUtil {
         newSheet.setColumnWidth(18, oldSheet.getColumnWidth(18));
     }
 
+    /**
+     * 复制销售单sheet（全新）
+     * @param oldSheet
+     * @param newSheet
+     * @param rowList
+     */
     public void copySaller(Sheet oldSheet, Sheet newSheet, List<Row> rowList) {
         List<Row> list = new ArrayList<>();
         int i = 2;
@@ -138,7 +171,7 @@ public class ExcelUtil {
     }
 
     /**
-     * 复制表头
+     * 复制表头（销售单）
      * @param oldSheet
      * @param newSheet
      */
@@ -158,10 +191,17 @@ public class ExcelUtil {
     }
 
     /**
-     * 完全复制复制行
+     * 完全复制行（销售单）
      */
     public Row copyRow(Sheet oldSheet, Sheet newSheet, int oldNum, int newNum) {
         Row oldRow = oldSheet.getRow(oldNum);
+        return copyRow(oldRow, newSheet, newNum);
+    }
+
+    /**
+     * 完全复制行（销售单）
+     */
+    public Row copyRow(Row oldRow, Sheet newSheet, int newNum) {
         Row newRow = newSheet.createRow(newNum);
         newRow.setHeight(oldRow.getHeight());
         newRow.setRowStyle(oldRow.getRowStyle());
@@ -175,8 +215,6 @@ public class ExcelUtil {
             newCell = newRow.createCell(i);
             newCell.setCellStyle(oldCell.getCellStyle());
             CellType cellType = oldCell.getCellType();
-//            newCell.setCellType(cellType);
-//            newCell.setCell
             switch (cellType) {
                 case NUMERIC:
                     if (i == 1) {

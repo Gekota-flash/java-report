@@ -3,6 +3,8 @@ package com.zyq.report.service;
 import com.zyq.report.model.SaleModel;
 import com.zyq.report.util.ExcelUtil;
 import com.zyq.report.util.LocalDateUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -13,6 +15,7 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class ExcelServiceImpl implements ExcelService {
 
@@ -87,13 +90,14 @@ public class ExcelServiceImpl implements ExcelService {
             while (iterator.hasNext()) {
                 s = iterator.next();
                 tempSheet = workbook.getSheet(s);
+                log.info("sheet页:{}", s);
                 if (tempSheet == null) {
                     tempSheet = workbook.createSheet(s);
                     excelUtil.setColumnWidth(sheet, tempSheet);
                     excelUtil.copyHeader(sheet, tempSheet);
                     excelUtil.copySaller(sheet, tempSheet, sallerRowsMap.get(s));
                 }else {
-
+                    appendSaller(tempSheet, sallerRowsMap.get(s));
                 }
             }
             workbook.write(fos);
@@ -108,9 +112,38 @@ public class ExcelServiceImpl implements ExcelService {
                 e.printStackTrace();
             }
         }
+    }
 
-        for (SaleModel model : saleModels) {
-            System.out.println(model.toString());
+    /**
+     * 子Sheet追加销售单
+     * @param tempSheet
+     * @param list
+     */
+    private void appendSaller(Sheet tempSheet, List<Row> list) {
+        if (list == null || list.size() == 0) {
+            return;
+        }
+        List<Row> rowList = excelUtil.getRowList(tempSheet);
+        List<String> existList = new ArrayList<>();
+        int number = tempSheet.getPhysicalNumberOfRows();
+        List<String> collect = list.stream().map(item -> item.getCell(0).getStringCellValue()).collect(Collectors.toList());
+        List<String> collect1 = rowList.stream().map(item -> item.getCell(0).getStringCellValue()).collect(Collectors.toList());
+        for (String s : collect1) {
+            if (collect.contains(s)) {
+                existList.add(s);
+            }
+        }
+        int tempi = number;
+        int j = 0;
+        int f = tempi;
+        for (int i = tempi; i < (tempi+list.size()); i++) {
+            Cell cell = list.get(j).getCell(0);
+            log.info(cell.getStringCellValue());
+            if (cell != null && !existList.contains(cell.getStringCellValue())) {
+                excelUtil.copyRow(list.get(j), tempSheet, f);
+                f++;
+            }
+            j++;
         }
     }
 
