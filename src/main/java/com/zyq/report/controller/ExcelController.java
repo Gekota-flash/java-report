@@ -1,6 +1,7 @@
 package com.zyq.report.controller;
 
 import com.zyq.report.config.SingleFile;
+import com.zyq.report.model.ComputeCostReq;
 import com.zyq.report.model.DistributeSaleReq;
 import com.zyq.report.service.ExcelService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,19 @@ public class ExcelController {
                 e.printStackTrace();
             }
         }
+        return "ok";
+    }
+
+    @RequestMapping(value = "/computeCost", method = RequestMethod.POST)
+    public String computeCost(@RequestBody ComputeCostReq req) {
+        excelService.computeCost(req.getMin(),
+                req.getMax(),
+                req.getPath(),
+                req.getSheetName(),
+                req.getCostMin(),
+                req.getCostMax(),
+                req.getCostPath(),
+                req.getCostSheetName());
         return "ok";
     }
 

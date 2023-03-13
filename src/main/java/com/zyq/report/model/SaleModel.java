@@ -20,7 +20,7 @@ public class SaleModel {
 
     private BigDecimal sale5;
 
-    private BigDecimal sale6;
+    private String sale6;
 
     private String sale7;
 

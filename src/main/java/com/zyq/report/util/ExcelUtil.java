@@ -99,7 +99,7 @@ public class ExcelUtil {
             saleModel.setSale3(row.getCell(3) == null ? null : row.getCell(3).getStringCellValue());
             saleModel.setSale4(row.getCell(4) == null ? null : new BigDecimal(row.getCell(4).getNumericCellValue()));
             saleModel.setSale5(row.getCell(5) == null ? null : new BigDecimal(row.getCell(5).getNumericCellValue()));
-            saleModel.setSale6(row.getCell(6) == null ? null : new BigDecimal(row.getCell(6).getNumericCellValue()));
+            saleModel.setSale6(row.getCell(6) == null ? null : row.getCell(6).getCellFormula());
             saleModel.setSale7(row.getCell(7) == null ? null : row.getCell(7).getStringCellValue());
             saleModel.setSale8(row.getCell(8) == null ? null : row.getCell(8).getStringCellValue());
             saleModel.setSale9(row.getCell(9) == null ? null : row.getCell(9).getStringCellValue());
@@ -227,7 +227,8 @@ public class ExcelUtil {
                     newCell.setCellValue(oldCell.getStringCellValue());
                     break;
                 case FORMULA:
-                    newCell.setCellValue(oldCell.getCellFormula());
+                    newCell.setCellFormula(oldCell.getCellFormula().replace(String.valueOf(oldRow.getRowNum()+1), String.valueOf(newRow.getRowNum()+1)));
+//                    newCell.setCellFormula(copyFormula(oldCell, newCell));
                     break;
                 case BLANK:
                     newCell.setBlank();
@@ -243,5 +244,13 @@ public class ExcelUtil {
         }
         return newRow;
     }
+
+//    private String copyFormula(Cell oldCell, Cell newCell) {
+//        String rowIndex = String.valueOf(oldCell.getRow().getPhysicalNumberOfCells());
+//        String newRowIndex = String.valueOf(newCell.getRow().getPhysicalNumberOfCells());
+//        String value = oldCell.getCellFormula().replace(rowIndex, newRowIndex);
+//        System.out.println(","+rowIndex+","+newRowIndex+","+value);
+//        return value;
+//    }
 
 }
